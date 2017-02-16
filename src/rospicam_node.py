@@ -23,11 +23,11 @@ class RosPiCam:
         camera.resolution = (640, 480)
         camera.framerate = 30
         
-        for foo in camera.capture_continuous(stream, format='jpeg'):
+        for foo in camera.capture_continuous(stream, format='jpeg', use_video_port=True):
             stream.truncate()
             stream.seek(0)
 
-            publish_image(stream)
+            self.publish_image(stream)
 
             if rospy.is_shutdown():
                 break
@@ -38,7 +38,7 @@ class RosPiCam:
         print "rospicam stop"
 
     def publish_image(self, stream):
-        image_msg = sensor_msgs.CompressedImage()
+        image_msg = CompressedImage()
         image_msg.header = Header()
         image_msg.format = 'jpeg'
         image_msg.data = stream.getvalue()
