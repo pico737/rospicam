@@ -10,19 +10,22 @@ from sensor_msgs.msg import CompressedImage
 
 class RosPiCam:
     def __init__(self):
-        print "rospicam start"
 
         # publishers
-        self.image_pub = rospy.Publisher('/rospicam/image/compressed', CompressedImage, queue_size=10)
+        self.image_pub = rospy.Publisher('/rospicam/image/compressed', CompressedImage, queue_size=1)
 
         # init the node
         rospy.init_node('rospicam', anonymous=True)
 
+        rospy.loginfo("rospicam start")
+
         stream = BytesIO()
         camera = PiCamera()
-        camera.resolution = (640, 480)
-        camera.framerate = 30
-        
+        resolution = rospy.get_param('~resolution', [640, 480])
+        camera.resolution = resolution
+        framerate_hz = float(rospy.get_param('~framerate', 30))
+        camera.framerate = framerate_hz
+
         for foo in camera.capture_continuous(stream, format='jpeg', use_video_port=True):
             stream.truncate()
             stream.seek(0)
@@ -35,7 +38,7 @@ class RosPiCam:
         stream.close()
         camera.close()
 
-        print "rospicam stop"
+        rospy.loginfo("rospicam stop")
 
     def publish_image(self, stream):
         image_msg = CompressedImage()

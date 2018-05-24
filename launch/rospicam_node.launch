@@ -1,0 +1,8 @@
+<launch>
+  <node pkg="rospicam" name="rospicam" type="rospicam_node.py" output="screen">
+    <rosparam>
+      framerate: 30
+      resolution: [640, 480]
+    </rosparam>
+  </node>
+</launch>
